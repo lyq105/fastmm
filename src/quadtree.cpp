@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include "quadtree.h"
 #include "defdata.h"
+#include "moment.h"
 #include <iostream>
 #include <math.h>
 using namespace std;
@@ -514,7 +515,7 @@ int plot_quadtree(Quadtree qtree,char filename[])
 }
 // 上行遍历树结构 计算每一个非空树节点的多极矩
 
-int quadtree_upward(Quadtree& qtree)
+int quadtree_upward(Quadtree& qtree, Mesh mesh, double* data)
 {
 	int maxLevel = qtree.treeDepth - 1;  // retrive max tree level.
 
@@ -541,7 +542,7 @@ int quadtree_upward(Quadtree& qtree)
 				// 计算多极矩，（调用一个计算接口）， 
 				// 输出是该节点的多极矩，输入是该节点的单元编号，
 				// 计算编号为cellindex的树节点的多极矩
-				//cal_multipole_moment(qtree,cellindex); 
+				//cal_multipole_moment(qtree,cellindex,mesh,data); 
 			}
 
 			//if ( qtree.treeNodeList[cellIndex].isLeaf == 0)
@@ -569,8 +570,6 @@ int quadtree_downward(Quadtree& qtree)
 	{
 		// 这一步可以统一到整个树的计算过程中。
 	}	
-
-
 	// 逐层向根方向遍历树结构
 	int maxLevel = qtree.treeDepth - 1;  // retrive max tree level.
 	for (int depth = 2; depth <= maxLevel; ++ depth)
