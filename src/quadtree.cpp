@@ -188,7 +188,7 @@ int find_interact_list(Quadtree& qtree)
   } // 所有树节点计算完毕
   //print_interact_list(qtree,241);
   //plot_tree_and_list(qtree,155);
-  animate_it(qtree);
+  //animate_it(qtree);
   return 0;
 }
 
