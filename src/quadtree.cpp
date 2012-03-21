@@ -21,6 +21,8 @@ using namespace std;
 static int maxTreeDepth = 50; // 数的最大深度
 static int maxEleminCell = 2; // 树节点中的最大单元数
 static int main_number = 0;   // 树节点的初始编号
+static int mmExpantionTerms = 10; //  多极展开项树
+
 
 int animate_it(Quadtree qtree)
 {
@@ -397,6 +399,10 @@ int quadtree_creat_childs(Mesh mesh,Quadtree& qtree,QuadtreeNode* ftnode)
 			{
 				qtree.elemList[k] = temparray[j][k - childnode->startIndex];
 			}
+
+			//  初始化树节点的多极系数，局部系数的内存
+			qtree
+
 			// 将节点插入节点列表；
 			quadtree_insert(qtree,childnode);
 		}
@@ -531,10 +537,11 @@ int quadtree_upward(Quadtree& qtree, Mesh mesh, double* data)
 		// 遍历同层次的树节点
 		for (int cellIndex = startIndex; cellIndex <= endIndex; ++cellIndex) 
 		{
-			// 这里需要查询父节点的编号
-			{
-				int fatherIndex = qtree.treeNodeList[cellIndex] -> father;
-			}
+			// 这里需要查询父节点的编号  
+			// 在传递过程中查询，并传递到父节点
+			//{
+				//int fatherIndex = qtree.treeNodeList[cellIndex] -> father;
+			//}
 
 			// 如果树节点不是叶子节点，则直接使用M2M将其累加到父节点中；
 			// 如果该树节点是叶子节点，则计算多极矩，并使用M2M将其累加到其父节点中；
