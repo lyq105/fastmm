@@ -514,7 +514,8 @@ int plot_quadtree(Quadtree qtree,char filename[])
 	return 0;
 }
 // 上行遍历树结构 计算每一个非空树节点的多极矩
-
+// NOTE:   这里的参数data就是迭代的向量，或者说是矩阵乘向量的向量
+//
 int quadtree_upward(Quadtree& qtree, Mesh mesh, double* data)
 {
 	int maxLevel = qtree.treeDepth - 1;  // retrive max tree level.
@@ -542,6 +543,8 @@ int quadtree_upward(Quadtree& qtree, Mesh mesh, double* data)
 				// 计算多极矩，（调用一个计算接口）， 
 				// 输出是该节点的多极矩，输入是该节点的单元编号，
 				// 计算编号为cellindex的树节点的多极矩
+				// 计算多极矩的时候需要将迭代向量代入计算
+
 				//cal_multipole_moment(qtree,cellindex,mesh,data); 
 			}
 
