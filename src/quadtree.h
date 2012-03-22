@@ -43,8 +43,8 @@ typedef struct _quadtreenode_type
   int lenAdjList;
 	double length;  // tree node length;
 	Point center;   // center of tree node;
-	LCcoeff* lccoeff;
-	MPcoeff* mpcoeff; // 
+	LCcoeff lccoeff;
+	MPcoeff mpcoeff; // 
 }QuadtreeNode;
 
 typedef struct _quadtree_type

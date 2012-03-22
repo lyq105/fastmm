@@ -401,7 +401,11 @@ int quadtree_creat_childs(Mesh mesh,Quadtree& qtree,QuadtreeNode* ftnode)
 			}
 
 			//  初始化树节点的多极系数，局部系数的内存
-			qtree
+			childnode -> mpcoeff.terms = mmExpantionTerms;
+			childnode -> lccoeff.terms = mmExpantionTerms;
+
+			childnode -> mpcoeff.mp_data = new double [mmExpantionTerms];
+			childnode -> lccoeff.lc_data = new double [mmExpantionTerms];
 
 			// 将节点插入节点列表；
 			quadtree_insert(qtree,childnode);
@@ -466,6 +470,8 @@ int quadtree_destory(Quadtree& qtree)
 
 	for (i = 0; i < qtree.numberTreenode; i++) {
 		//delete [] qtree.treeNodeList[i]->elementList;
+		delete [] qtree.treeNodeList[i] -> lccoeff.lc_data;
+		delete [] qtree.treeNodeList[i] -> mpcoeff.mp_data;
 		delete qtree.treeNodeList[i];
 	}
 	delete [] qtree.treeNodeList;
