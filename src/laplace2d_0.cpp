@@ -29,7 +29,7 @@ double gausswt[4] = {0.34785485,0.34785485,0.65214515,0.65214515};
 const double pi = 3.14159265;
 
 
-int laplace2d_0(mesh bmesh, bc bc1, solu& solution)
+int laplace2d_0(Mesh bmesh, bc bc1, solu& solution)
 //int solveBem2d(int argc, const char *argv[])
 {
 	int i,j;
@@ -164,7 +164,7 @@ int laplace2d_0(mesh bmesh, bc bc1, solu& solution)
 	return 0;
 }
 
-int print_temp(mesh bmesh, solu solution,string resfname)
+int print_temp(Mesh bmesh, solu solution,string resfname)
 {
 	FILE* fp_fnode;
   fp_fnode = fopen(resfname.c_str(),"w");
@@ -195,7 +195,7 @@ int print_temp(mesh bmesh, solu solution,string resfname)
 	return 0;
 }
 
-double u_boundary(int number, mesh bmesh, solu solution)
+double u_boundary(int number, Mesh bmesh, solu solution)
 {
   double k = 0;
   double sum = 0;
@@ -209,7 +209,7 @@ double u_boundary(int number, mesh bmesh, solu solution)
   }
   return sum/k;
 }
-double u_field(double sx0, double sx1, mesh bmesh, solu solution)
+double u_field(double sx0, double sx1, Mesh bmesh, solu solution)
 {
 	int j;
   double unx,uny;

@@ -9,7 +9,9 @@
 
 #ifndef __QUADTREE_H__ 
 #define __QUADTREE_H__ 
-#include "defdata.h"
+//#include "defdata.h"
+#include "quadtree.h"
+#include "initmesh.h"
 
 // data type's Defination
 //  将树节点的多极和局部系数并入到节点以后就可以不用“数节点的数目”了。

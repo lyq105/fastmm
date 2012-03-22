@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "quadtree.h"
-#include "defdata.h"
+//#include "defdata.h"
 #include "moment.h"
 #include <iostream>
 #include <math.h>
@@ -217,10 +217,15 @@ int cal_convex_hall(Mesh& mesh,Point& center,double& length)
 	for (j = 0; j < 2; j++)
 	{
 		x_max[j] = x_min[j]=0;
-		for (i = 0; i < mesh.TotleNodeNumber; i++)
+		//for (i = 0; i < mesh.TotleNodeNumber; i++)
+		//{
+			//x_max[j] = x_max[j] >= mesh.MeshPointList[i].x[j]? x_max[j] : mesh.MeshPointList[i].x[j];
+			//x_min[j] = x_min[j] <= mesh.MeshPointList[i].x[j]? x_min[j] : mesh.MeshPointList[i].x[j];
+		//}
+		for (i = 0; i < mesh.nodenum; i++)
 		{
-			x_max[j] = x_max[j] >= mesh.MeshPointList[i].x[j]? x_max[j] : mesh.MeshPointList[i].x[j];
-			x_min[j] = x_min[j] <= mesh.MeshPointList[i].x[j]? x_min[j] : mesh.MeshPointList[i].x[j];
+			x_max[j] = x_max[j] >= mesh.node[i][j]? x_max[j] : mesh.node[i][j];
+			x_min[j] = x_min[j] <= mesh.node[i][j]? x_min[j] : mesh.node[i][j];
 		}
 		center.x[j] = 0.5*(x_max[j] + x_min[j]);
 		length = length >= (x_max[j] - x_min[j]) ? length: (x_max[j] - x_min[j]);
@@ -245,7 +250,7 @@ int quadtree_creat(Quadtree& qtree, Mesh& mesh)
 	root -> isLeaf = 0;    // is a leaf node
 	root -> father = -1;   // root father's numbering is -1 
 	root -> startIndex = 0; 
-	root -> maxElem = mesh.TotleElementNumber;
+	root -> maxElem = mesh.elemnum;
 	root -> coord = 0;
 	
 	// 初始化树
@@ -292,8 +297,8 @@ int quadtree_creat(Quadtree& qtree, Mesh& mesh)
 
   find_interact_list(qtree);
 
-	//print_quadtree_info(qtree,"treeinfo1.txt");	
-	//plot_quadtree(qtree,"treeinfo.plt");
+	print_quadtree_info(qtree,"treeinfo1.txt");	
+	plot_quadtree(qtree,"treeinfo.plt");
 
 	return 0;
 }
@@ -335,12 +340,17 @@ int quadtree_creat_childs(Mesh mesh,Quadtree& qtree,QuadtreeNode* ftnode)
 		eindex = qtree.elemList[i];
 
 		double x1[2],x2[2];
-
+/*
 		x1[0] = mesh.MeshPointList[mesh.CellList[eindex].cellnumber[0]].x[0];
 		x1[1] = mesh.MeshPointList[mesh.CellList[eindex].cellnumber[0]].x[1];
 
 		x2[0] = mesh.MeshPointList[mesh.CellList[eindex].cellnumber[1]].x[0];
 		x2[1] = mesh.MeshPointList[mesh.CellList[eindex].cellnumber[1]].x[1];
+*/
+		x1[0] = mesh.node[ mesh.elem[eindex][0] ][0];
+		x1[1] = mesh.node[ mesh.elem[eindex][0] ][1];
+		x2[0] = mesh.node[ mesh.elem[eindex][1] ][0];
+		x2[1] = mesh.node[ mesh.elem[eindex][1] ][1];
 
 		double x = 0.5*(x1[0] + x2[0]);
 		double y = 0.5*(x1[1] + x2[1]);

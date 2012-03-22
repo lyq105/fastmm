@@ -14,7 +14,7 @@ const double epsilong = 0.05;
 
 
 // describe the 1st and 2nd boundary condition
-int initialBC(bc& bc1,mesh bmesh)
+int initialBC(bc& bc1,Mesh bmesh)
 {
 	bc1.freedom = bmesh.elemnum;
 
@@ -86,7 +86,7 @@ int getRBCvalue(solu solution, rbc& rbc1 )
   return 0;
 }
 
-int initRbc(mesh bmesh, rbc* rbc1, int rbcnum)
+int initRbc(Mesh bmesh, rbc* rbc1, int rbcnum)
 {
 	for (int rindex = 0; rindex < rbcnum; rindex++) 
 	{
@@ -118,7 +118,7 @@ int initRbc(mesh bmesh, rbc* rbc1, int rbcnum)
 	return 0;
 }
 
-int qr_boundary(mesh bmesh,rbc& rbc1)
+int qr_boundary(Mesh bmesh,rbc& rbc1)
 {
 	int i,j;
 	double hij,gij;
@@ -232,7 +232,7 @@ int main(int argc, const char *argv[])
 		filename = argv[1];
 	}
 
-	mesh bmesh;
+	Mesh bmesh;
 	bc bc1;
 	rbc rbc1;
 	solu solution,solu0;

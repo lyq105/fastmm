@@ -30,4 +30,5 @@ $(target): $(objects)
 	@$(CC) $(CFLAGS) -c $< -o $@ 
 
 clean:
+	#@rm *.o $(target)
 	@rm *.o 

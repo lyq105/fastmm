@@ -4,7 +4,7 @@
 #include <string>
 #include "initmesh.h"
 using namespace std;
-
+// NOTE: this code may cause memory leaks.
 
 template <typename T>
 int allocatearray( T** &a,int fdim,int sdim)
@@ -29,7 +29,7 @@ int allocatevector(T* &v,int dim)
 	}
 }
 
-int initMesh(mesh& bmesh,string filename)
+int initMesh(Mesh& bmesh,string filename)
 {
 	string buffer;
 	istringstream sPeaser;
@@ -94,21 +94,21 @@ int initMesh(mesh& bmesh,string filename)
 		bmesh.felem[i][2] = e3 - 1;
 	}
 
-  //ofstream tec("tec.plt");
+	ofstream tec("tec.plt");
   
-  //tec << "zone " << "n=" << bmesh.nodenum 
-                 //<< ",e= " << bmesh.elemnum
-                 //<< ",et= triangle"
-                 //<< ",f = fepoint" << endl;
+	tec << "zone " << "n=" << bmesh.nodenum 
+								 << ",e= " << bmesh.elemnum
+								 << ",et= triangle"
+								 << ",f = fepoint" << endl;
 
-  //for (int i = 0; i< bmesh.nodenum; i++)
-  //{
-    //tec << bmesh.node[i][0] << " " << bmesh.node[i][1] << endl;
-  //}
-  //for (int i = 0; i< bmesh.elemnum; i++)
-  //{
-    //tec << bmesh.elem[i][0] +1 << " " << bmesh.elem[i][1]+1 <<" " << bmesh.elem[i][1]+1<< endl;
-  //}
+	for (int i = 0; i< bmesh.nodenum; i++)
+	{
+		tec << bmesh.node[i][0] << " " << bmesh.node[i][1] << endl;
+	}
+	for (int i = 0; i< bmesh.elemnum; i++)
+	{
+		tec << bmesh.elem[i][0] +1 << " " << bmesh.elem[i][1]+1 <<" " << bmesh.elem[i][1]+1<< endl;
+	}
 
 	return 0;
 }
