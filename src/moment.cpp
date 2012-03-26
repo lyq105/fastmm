@@ -1,11 +1,16 @@
 #include "moment.h"
+#include <complex.h>
 
+#define _Complex complex;
 // 计算叶子节点的多极矩
 void cal_multipole_moment(Quadtree& qtree,int cellindex,Mesh mesh,double* data)
 {
 	//  计算多极矩
 	//  遍历叶子节点的单元，计算积分，并累加到多极系数中
-	
+	int eindex;
+	double x1,x2,y1,y2;
+	complex double z1,z2,zwbar,zp1,zp2;
+
 	//  查询单元序号并开始遍历
 	QuadtreeNode& qtnode = *qtree.treeNodeList[cellindex];
 
@@ -14,17 +19,23 @@ void cal_multipole_moment(Quadtree& qtree,int cellindex,Mesh mesh,double* data)
 	
 	for (int i = startIndex; i <= endIndex; ++i)
 	{
-		// 取出单元的两个节点列表
-		mesh.CellList[i]
-		int n =
-		z1 = cmplx(y(1,n1)-cx, y(2,n1)-cy) 
-		z2 = cmplx(y(1,n2)-cx, y(2,n2)-cy) 
-		zwbar = conjg(z2 - z1)             
-		zwbar = zwbar/abs(zwbar)           ! omega bar
-		zp1   = z1*zwbar                   
-		zp2   = z2*zwbar                   
-		znorm = cmplx(dnorm(1,nelm),dnorm(2,nelm)) ! complex normal n
-		if(bc(1,nelm) .eq. 1.d0) then      ! Assign values to phi and q
+		// 取出单元号
+		eindex = qtree.elemList[i];
+
+		x1 = mesh.node[ mesh.elem[eindex][0] ] [0];
+		x2 = mesh.node[ mesh.elem[eindex][0] ] [1];
+		y1 = mesh.node[ mesh.elem[eindex][1] ] [0];
+		y2 = mesh.node[ mesh.elem[eindex][1] ] [1];
+		
+		z1 = (x1 - qtnode.center.x[0]) + (x2 - qtnode.center.x[1]);
+		z2 = (y1 - qtnode.center.x[0]) + (y2 - qtnode.center.x[1]);
+		zwbar = conj(z2 - z1);             
+		zwbar = zwbar/abs(zwbar);
+		zp1   = z1*zwbar;                   
+		zp2   = z2*zwbar;                   
+		znorm = mesh.elemnorm[0] + mesh.elemnorm[1];
+		//znorm = cmplx(dnorm(1,nelm),dnorm(2,nelm)); 
+		if(bc(1,nelm) .eq. 1.d0) then      
 			phi = 0.D0
 				q   = u(i)
 		else if(bc(1,nelm) .eq. 2.d0) then
@@ -33,15 +44,14 @@ void cal_multipole_moment(Quadtree& qtree,int cellindex,Mesh mesh,double* data)
 				endif
 
 
-				a(0) = a(0) - (zp2-zp1)*q              ! G kernel
-				do k=1,nexp
-					a(k) = a(k) + (zp2-zp1)*znorm*phi    ! F kernel
+				a(0) = a(0) - (zp2-zp1)*q;             // G kernel
+				for(int k=1; k< nexp;k++)
+					a(k) = a(k) + (zp2-zp1)*znorm*phi    // F kernel
 						zp1  = zp1*z1/(k+1)
 						zp2  = zp2*z2/(k+1)
-						a(k) = a(k) - (zp2-zp1)*q            ! G kernel
+						a(k) = a(k) - (zp2-zp1)*q;          // G kernel
 						enddo
 
-						enddo
 
 
 

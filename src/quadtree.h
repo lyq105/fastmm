@@ -63,7 +63,7 @@ typedef struct _quadtree_type
 /// 创建四叉树
 int quadtree_creat(Quadtree& qtree, Mesh& mesh); 
 /// 创建子节点
-int quadtree_creat_childs(Mesh mesh,Quadtree& qtree,QuadtreeNode* ftnode);
+int quadtree_creat_childs(Mesh mesh, Quadtree& qtree, QuadtreeNode* ftnode);
 /// 初始化四叉树
 int quadtree_init(Quadtree& qtree, int numelem); 
 /// 插入四叉树节点
