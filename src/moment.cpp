@@ -3,12 +3,13 @@
 
 #define _Complex complex;
 // 计算叶子节点的多极矩
-void cal_multipole_moment(Quadtree& qtree,int cellindex,Mesh mesh,double* data)
+void cal_multipole_moment(Quadtree& qtree,int cellindex,Mesh mesh,bc boundaryCondition,double* data)
 {
 	//  计算多极矩
 	//  遍历叶子节点的单元，计算积分，并累加到多极系数中
 	int eindex;
 	double x1,x2,y1,y2;
+	double phi,q;
 	complex double z1,z2,zwbar,zp1,zp2;
 
 	//  查询单元序号并开始遍历
@@ -33,29 +34,33 @@ void cal_multipole_moment(Quadtree& qtree,int cellindex,Mesh mesh,double* data)
 		zwbar = zwbar/abs(zwbar);
 		zp1   = z1*zwbar;                   
 		zp2   = z2*zwbar;                   
-		znorm = mesh.elemnorm[0] + mesh.elemnorm[1];
-		//znorm = cmplx(dnorm(1,nelm),dnorm(2,nelm)); 
-		if(bc(1,nelm) .eq. 1.d0) then      
-			phi = 0.D0
-				q   = u(i)
-		else if(bc(1,nelm) .eq. 2.d0) then
-			phi = u(i)
-				q   = 0.D0
-				endif
+		znorm = mesh.elemnorm[0] + mesh.elemnorm[1]*I;
+		//znorm = cmplx(dnorm(1,nelm),dnorm(2,nelm));
+		//
+		// 指定迭代变量 
 
+		if (boundaryCondition.bctags[i] == 1)
+		{
+			phi = 0;
+			q = data[i];
+		}
+		if (boundaryCondition.bctags[i] == 2)
+		{
+			phi = data[i];
+			q = 0;
+		}
 
-				a(0) = a(0) - (zp2-zp1)*q;             // G kernel
-				for(int k=1; k< nexp;k++)
-					a(k) = a(k) + (zp2-zp1)*znorm*phi    // F kernel
-						zp1  = zp1*z1/(k+1)
-						zp2  = zp2*z2/(k+1)
-						a(k) = a(k) - (zp2-zp1)*q;          // G kernel
-						enddo
-
-
-
-
-
+		// G kernel
+		qtnode.mpcoeff.mp_data[0] = qtnode.mpcoeff.mp_data(0) - (zp2-zp1)*q;     
+		for(int k = 1; k < nexp; k++)
+		{
+	 		// F kernel
+			qtnode.mpcoeff.mp_data(k) = qtnode.mpcoeff.mp_data(k) + (zp2-zp1)*znorm*phi; 
+			zp1  = zp1*z1/(k+1);
+			zp2  = zp2*z2/(k+1);
+			// G kernel
+			qtnode.mpcoeff.mp_data(k) = qtnode.mpcoeff.mp_data(k) - (zp2-zp1)*q;
+		}
 	}// 遍历单元
 } 
 // 传递多极矩到父节点
