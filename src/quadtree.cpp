@@ -414,8 +414,8 @@ int quadtree_creat_childs(Mesh mesh,Quadtree& qtree,QuadtreeNode* ftnode)
 			childnode -> mpcoeff.terms = mmExpantionTerms;
 			childnode -> lccoeff.terms = mmExpantionTerms;
 
-			childnode -> mpcoeff.mp_data = new double [mmExpantionTerms];
-			childnode -> lccoeff.lc_data = new double [mmExpantionTerms];
+			childnode -> mpcoeff.mp_data = new _Complex double [mmExpantionTerms];
+			childnode -> lccoeff.lc_data = new _Complex double [mmExpantionTerms];
 
 			// 将节点插入节点列表；
 			quadtree_insert(qtree,childnode);
@@ -568,7 +568,7 @@ int quadtree_upward(Quadtree& qtree, Mesh mesh, double* data)
 				// 计算编号为cellindex的树节点的多极矩
 				// 计算多极矩的时候需要将迭代向量代入计算
 
-				//cal_multipole_moment(qtree,cellindex,mesh,data); 
+				cal_multipole_moment(qtree,cellIndex,mesh,data); 
 			}
 
 			//if ( qtree.treeNodeList[cellIndex].isLeaf == 0)
@@ -577,7 +577,7 @@ int quadtree_upward(Quadtree& qtree, Mesh mesh, double* data)
 				// 传递多极系数使用（M2M公式将当前节点的
 				// 多极矩进行转换并累加到父节点中），输入是当前节点的多极矩，
 
-				//transfer_mm_to_its_father_by_m2m(qtree,cellindex);
+				transfer_mm_to_its_father_by_m2m(qtree,cellIndex);
 			}
 		} // 遍历层结束
 
@@ -606,15 +606,19 @@ int quadtree_downward(Quadtree& qtree)
 		// 遍历同层次的树节点
 		for (int cellIndex = startIndex; cellIndex <= endIndex; ++cellIndex) 
 		{
+			QuadtreeNode& qnode = *qtree.treeNodeList[cellIndex];
 			// 遍历交互节点列表，使用M2L，将局部矩累加到节点上
 			// 需要查询交互节点
-
-			//transfer_lm_by_m2l(qtree, cellIndex);	
+			for (int i = 0; i < qnode.lenInterList; i++)
+			{
+				int iIndex = qnode.interList[i];
+				transfer_lm_by_m2l(qtree, cellIndex, iIndex);	
+			}
 			// 将远程单元的贡献累加到当前单元中，
 			// 只要使用L2L将父节点的局部系数转移到当前节点的中心上
 			{
 				if (depth == 2 ) continue; // 如果当前节点是第二层节点，则不必使用L2L
-				//transfer_lm_by_l2l(qtree, cellIndex);
+				transfer_lm_by_l2l(qtree, cellIndex);
 			}
 		} // 遍历层
 

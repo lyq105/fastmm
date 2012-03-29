@@ -19,6 +19,19 @@ typedef struct __rbc_type
 	double* q;
 } rbc;
 
+typedef struct __bc_type
+{
+	int freedom;
+	int* bctags;
+	double* bcvalues;
+} bc;
+
+typedef struct __solu_type
+{
+	double *u;
+	double *q;
+} solu;
+
 typedef struct __mesh_type
 {
 	int nodenum;           // number of boundary nodes 
@@ -37,6 +50,7 @@ typedef struct __mesh_type
 	int elemnum;           // number of boundary elements
 	int relemnum;					 // radiative boundary element
 	int felemnum;          // number of field element 
+	bc boundaryCondition;
 } Mesh;
 
 int initMesh(Mesh& bmesh,std::string filename);

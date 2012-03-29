@@ -224,7 +224,7 @@ int qr_boundary(Mesh bmesh,rbc& rbc1)
 }
 
 
-int main(int argc, const char *argv[])
+int mainp(int argc, const char *argv[])
 {
 	string filename = "bem2d.dat";
 	if (argc >=2)

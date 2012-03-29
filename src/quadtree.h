@@ -12,14 +12,14 @@
 //#include "defdata.h"
 #include "quadtree.h"
 #include "initmesh.h"
-
+#include <complex.h>
 // data type's Defination
 //  将树节点的多极和局部系数并入到节点以后就可以不用“数节点的数目”了。
 typedef struct __multipole_coeff__
 {
 	//int treeNodenumber;  // 树节点的数目
 	int terms;           // 展开项数
-	double* mp_data;    // 多极系数  
+	_Complex double* mp_data;    // 多极系数  
 } MPcoeff;  // 多极矩系数
 
 
@@ -27,7 +27,7 @@ typedef struct __local_coeff__
 {
 	//int treeNodenumber;  // 树节点的数目
 	int terms;          	 // 展开项数
-	double* lc_data;    	 // 局部系数  p 
+	_Complex double* lc_data;    	 // 局部系数  p 
 } LCcoeff;  // 局部矩系数
 
 typedef struct _quadtreenode_type

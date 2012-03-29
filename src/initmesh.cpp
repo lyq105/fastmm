@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include "initmesh.h"
+#include <stdlib.h>
 using namespace std;
 // NOTE: this code may cause memory leaks.
 
@@ -34,6 +35,12 @@ int initMesh(Mesh& bmesh,string filename)
 	string buffer;
 	istringstream sPeaser;
 	ifstream ifile(filename.c_str(),ios::in);
+
+	if (!ifile)
+	{
+		cout << "Can not open mesh file " << filename << endl;
+		exit(0);
+	}
 
 	getline(ifile,buffer);
 	sPeaser.str(buffer);
