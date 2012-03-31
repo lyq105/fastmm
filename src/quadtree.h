@@ -71,7 +71,7 @@ int quadtree_insert(Quadtree& qtree, QuadtreeNode* tnode);
 /// 释放四叉树占据的内存
 int quadtree_destory(Quadtree& qtree);
 /// 上行遍历四叉树
-int quadtree_upward(Quadtree& qtree);
+int quadtree_upward(Quadtree& qtree, Mesh mesh, double* u);
 /// 下行遍历四叉树
 int quadtree_downward(Quadtree& qtree);
 /// 查找交互列表
@@ -91,5 +91,6 @@ int print_quadtree_info(Quadtree qtree,char filename[]);
 int animate_it(Quadtree qtree);
 /// 输出交互节点列表
 int print_interact_list(Quadtree qtree,int number);
+int draw_tree_graph(Quadtree& qtree);
 
 #endif

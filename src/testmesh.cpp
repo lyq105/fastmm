@@ -32,7 +32,8 @@ int main(int argc, const char *argv[])
 	Mesh mesh;
 	Quadtree qtree;
 	
-	initMesh(mesh,string("sqare_with_hole.dat"));
+	//initMesh(mesh,string("sqare_with_hole.dat"));
+	initMesh(mesh,string("bem2d.dat"));
 	//if(!InitialMesh(nodefilename,elemfilename,&mesh,link2d))
 	//{
 		//printf("Failed to reading files!\n");
@@ -41,6 +42,7 @@ int main(int argc, const char *argv[])
   //maxTreeDepth = 20;
   //maxEleminCell = 5;
 	quadtree_creat(qtree,mesh);	
+	draw_tree_graph(qtree);
 
 	//Mesh2tecplot(&mesh,link2d,outfilename);
 	//FreeMeshMem(&mesh);

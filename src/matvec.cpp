@@ -1,8 +1,17 @@
 /// This file is preform matrix vector products of Fast mulitipole boundary method.
 #include "matvec.h"
 #include <complex.h>
+#include <math.h>
 
 const double pi2 = 2 * 3.14159265; 
+const double pi =  3.14159265; 
+extern double gaussnum;// = 4;
+extern double gausspt[4]; //= { 0.86113631, -0.86113631, 0.33998014, -0.33998014 };
+extern double gausswt[4];// = {0.34785485,0.34785485,0.65214515,0.65214515};
+
+//double gaussnum = 7;
+//double gausspt[7] = {0, 0.94910791, -0.94910791, 0.74153119, -0.74153119, 0.40584515,-0.40584515 };
+//double gausswt[7] = {0.41795918,0.12948497,0.12948497,0.27970539,0.27970539,0.38183005,0.38183005};
 
 int find_elem(Quadtree& qtree,int cIndex, unsigned int* list)
 {
@@ -12,7 +21,7 @@ int find_elem(Quadtree& qtree,int cIndex, unsigned int* list)
 	int len = qnode.maxElem;
 	for (int i = 0; i <qnode.lenInterList; i++) 
 	{
-		len += qtree.treeNodeList[ qnode.interList[i] ].maxElem;
+		len += qtree.treeNodeList[ qnode.interList[i] ] -> maxElem;
 	}
 	
 	list = new unsigned int [len + 1];
@@ -21,9 +30,9 @@ int find_elem(Quadtree& qtree,int cIndex, unsigned int* list)
 	int index = 1;
 	for (int i = 0; i <qnode.lenInterList; i++) 
 	{
-		int maxelem = qtree.treeNodeList[ qnode.interList[i] ].maxElem;
-		int start = qtree.treeNodeList[ qnode.interList[i] ].startIndex;
-		int end = start + qtree.treeNodeList[ qnode.interList[i] ].maxElem - 1;	
+		int maxelem = qtree.treeNodeList[ qnode.interList[i] ] -> maxElem;
+		int start = qtree.treeNodeList[ qnode.interList[i] ] -> startIndex;
+		int end = start + qtree.treeNodeList[ qnode.interList[i] ] -> maxElem - 1;	
 		for (int j = start; j <= end; j++)
 	 	{
 			list[index] = qtree.elemList[j];
@@ -52,9 +61,11 @@ void matvec(Quadtree& qtree,Mesh mesh,double* itervec, double* data)
 	// 首先是遍历树的叶子节点。 在每一个叶子节点中遍历配置点 
 	// 针对每一个配置点计算积分
 
-	// 更新多极和局部系数
-	_Complex double z0,z1;
+	_Complex double z0,zp;
+	double hij,gij,x,y;
 
+
+	// 更新多极和局部系数
 	quadtree_upward(qtree,mesh,data); //多极系数
 	quadtree_downward(qtree); // 局部系数
 
@@ -62,7 +73,8 @@ void matvec(Quadtree& qtree,Mesh mesh,double* itervec, double* data)
 	{
 		if (qtree.treeNodeList[i] ->isLeaf == 1)
 		{
-			QuadtreeNode& qnode = qtree.treeNodeList[i];
+			QuadtreeNode& qnode = *qtree.treeNodeList[i];
+			int ntylr = qnode.lccoeff.terms; 
 
 			int start = qnode.startIndex; 
 			int end = qnode.startIndex + qnode.maxElem - 1;
@@ -75,8 +87,8 @@ void matvec(Quadtree& qtree,Mesh mesh,double* itervec, double* data)
 				int eindex = qtree.elemList[index];
 				int nindex0 = mesh.elem[eindex][0];
 				int nindex1 = mesh.elem[eindex][1];
-				double source_x0 = 0.5*(bmesh.node[nindex0][0] + bmesh.node[nindex1][0]);
-				double source_x1 = 0.5*(bmesh.node[nindex0][1] + bmesh.node[nindex1][1]);
+				double source_x0 = 0.5*(mesh.node[nindex0][0] + mesh.node[nindex1][0]);
+				double source_x1 = 0.5*(mesh.node[nindex0][1] + mesh.node[nindex1][1]);
 
 				// 2--- 查找需要直接计算单元积分的单元号。
 
@@ -86,22 +98,22 @@ void matvec(Quadtree& qtree,Mesh mesh,double* itervec, double* data)
 				for (int j = 1; j < elemNumberList[0]+1; j++) // 遍历当前树节点中的单元
 				{
 					// find out the number of 2 ends of a cell.
-					int cindex = elemNumberList[j]
-					int	nindex0 = bmesh.elem[cindex][0];
-					int nindex1 = bmesh.elem[cindex][1];
+					int cindex = elemNumberList[j];
+					int	nindex0 = mesh.elem[cindex][0];
+					int nindex1 = mesh.elem[cindex][1];
 					double x0[2],x1[2];	
-					x0[0] = bmesh.node[nindex0][0];
-					x0[1] = bmesh.node[nindex0][1];
-					x1[0] = bmesh.node[nindex1][0];
-					x1[1] = bmesh.node[nindex1][1];
+					x0[0] = mesh.node[nindex0][0];
+					x0[1] = mesh.node[nindex0][1];
+					x1[0] = mesh.node[nindex1][0];
+					x1[1] = mesh.node[nindex1][1];
 
 					// calculate the length of a cell.
 					double gama_j = (x0[0] - x1[0])*(x0[0] - x1[0])+(x0[1] - x1[1])*(x0[1] - x1[1]);
 
 					gama_j = sqrt(gama_j);
 					// calculate the outter unit normal vector of the cell.
-					unx = bmesh.elemnorm[j][0];
-					uny = bmesh.elemnorm[j][1];
+					double unx = mesh.elemnorm[j][0];
+					double uny = mesh.elemnorm[j][1];
 					//unx =  (bmesh.node[nindex1][1] - bmesh.node[nindex0][1])/gama_j;
 					//uny =  -(bmesh.node[nindex1][0] - bmesh.node[nindex0][0])/gama_j;
 
@@ -148,11 +160,11 @@ void matvec(Quadtree& qtree,Mesh mesh,double* itervec, double* data)
 					fact = fact/itylr;
 					qnode.lccoeff.lc_data[itylr] *= fact;
 				}
-				zp = qnode.lccoeff.lc_data[itylr];
-				z0 = (source_x0 - qnode.center[0]) + (source_x1 - qnode.center[1])*I;
+				zp = qnode.lccoeff.lc_data[ntylr];
+				z0 = (source_x0 - qnode.center.x[0]) + (source_x1 - qnode.center.x[1])*I;
 				for(int itylr=ntylr-1; itylr >= 0; itylr--)
 				{
-					zp = zp*z0 + b(itylr,icell);
+					zp = zp*z0 + qnode.lccoeff.lc_data[ntylr];
 				}	
 				zp = zp/pi2;
 				itervec[eindex] += creal(zp);

@@ -44,7 +44,41 @@ int animate_it(Quadtree qtree)
   }
   return 0;
 }
+/// generater a tree graph using dot language;
+int draw_tree_graph(Quadtree& qtree)
+{
+	FILE* fp;
+	fp = fopen("tree_graph.dot","w");
+	fprintf(fp, "digraph fmm_bem\{\n");
+	fprintf(fp, "ranksep = 2;\n");
+	fprintf(fp, "node[shape = box]\n");  // tree node's style
+	// write tree node infomation.
+	fprintf(fp, "node0 [label= \"root\", width = 2, height = 1.7,fontsize = 28]\n");
+	for (int nIndex = 1; nIndex < qtree.numberTreenode; nIndex++)
+ 	{
+		if (qtree.treeNodeList[nIndex] ->isLeaf ==1)
+			fprintf(fp, "node%d [label= \"%d\", shape = circle, fillcolor = lightgrey, style = filled]\n",nIndex,nIndex);
+		fprintf(fp, "node%d [label= \"%d\"]\n",nIndex,nIndex);
+	}
 
+	// specify the edge style.
+	fprintf(fp, "edge[color = black]\n");
+	
+	// write edge infomation.
+	for (int nIndex = 1; nIndex < qtree.numberTreenode; nIndex++)
+	{
+		int father = qtree.treeNodeList[nIndex] ->father;
+		fprintf(fp, "node%d -> node%d\n",father,nIndex);		
+	}
+
+	fprintf(fp, "\}\n");
+
+	fclose(fp);
+
+	system("dot tree_graph.dot -Tpdf -o tree_graph.pdf");
+
+	return 0;
+}
 
 int plot_tree_and_list(char* filename, Quadtree qtree, int number)
 {
@@ -297,7 +331,7 @@ int quadtree_creat(Quadtree& qtree, Mesh& mesh)
 
   find_interact_list(qtree);
 
-	print_quadtree_info(qtree,"treeinfo1.txt");	
+	//print_quadtree_info(qtree,"treeinfo1.txt");	
 	plot_quadtree(qtree,"treeinfo.plt");
 
 	return 0;
